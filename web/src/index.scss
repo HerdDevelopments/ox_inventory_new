@@ -1,0 +1,997 @@
+$mainColor: #22232c;
+$textColor: #c1c2c5;
+$mainFont: Roboto;
+
+$secondaryColor: rgba(12, 12, 12, 0.4);
+$secondaryColorHighlight: #33343F;
+$secondaryColorLight: rgba(0, 0, 0, 0.5);
+$secondaryColorDark: rgba(12, 12, 12, 0.8);
+
+$gridCols: 5;
+$gridRows: 5;
+$gridSize: 9.5vh;
+$gridGap: 2px;
+$containerSize: calc(#{$gridRows} * #{$gridSize + 0.22vh} + #{$gridRows} * #{$gridGap});
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+    'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  background: none !important;
+  overflow: hidden !important;
+  user-select: none;
+}
+
+#root {
+  height: 100%;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+  font-family: $mainFont;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.app-wrapper {
+  height: 100%;
+  width: 100%;
+  color: white;
+}
+
+.context-menu-list {
+  min-width: 0;
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  outline: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.context-menu-item  {
+  padding: 8px;
+  border-radius: 4px;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  color: $textColor;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  &:active {
+    transform: none;
+  }
+  &:hover {
+    background-color: $secondaryColorHighlight;
+    cursor: pointer;
+  }
+}
+
+.tooltip-description {
+  padding-top: 5px;
+}
+
+.tooltip-markdown > p {
+  margin: 0;
+}
+
+button:active {
+  transform: translateY(3px);
+}
+
+.item-drag-preview {
+  width: 7.7vh;
+  height: 7.7vh;
+  z-index: 1;
+  position: fixed;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 7vh;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.inventory-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  gap: 20px;
+}
+
+.inventory-control {
+  display: flex;
+  // Move the amount / use / give / close controls away from the center of the screen
+  // and dock them near the bottom instead so they don't block the main view.
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  .inventory-control-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .inventory-control-input {
+    transition: 200ms;
+    padding: 16px 8px;
+    border-radius: 2.5%;
+    font-family: $mainFont;
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+    border: none;
+    color: #fff;
+    background-color: $secondaryColor;
+    &:focus-within {
+      background-color: $secondaryColorDark;
+    }
+  }
+
+  .inventory-control-button {
+    font-size: 14px;
+    color: #fff;
+    background-color: $secondaryColor;
+    transition: 200ms;
+    padding: 12px 8px;
+    border-radius: 2.5%;
+    border: none;
+    text-transform: uppercase;
+    font-family: $mainFont;
+    width: 100%;
+    font-weight: 500;
+    &:hover {
+      background-color: $secondaryColorDark;
+    }
+  }
+}
+
+.useful-controls-dialog {
+  background-color: $mainColor;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: $textColor;
+  width: 450px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  border-radius: 4px;
+  gap: 16px;
+}
+
+.useful-controls-dialog-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.useful-controls-dialog-title {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+}
+
+.useful-controls-dialog-close {
+  width: 25px;
+  height: 25px;
+  padding: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  fill: $textColor;
+  &:hover {
+    background-color: $secondaryColorHighlight;
+    cursor: pointer;
+  }
+}
+
+.useful-controls-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.useful-controls-button {
+  position: absolute !important;
+  bottom: 25px;
+  right: 25px;
+  transition: 200ms !important;
+  border: none;
+  color: white;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  fill: white;
+  border-radius: 5% !important;
+  background-color: $secondaryColor !important;
+  &:hover {
+    background-color: $secondaryColorDark !important;
+    cursor: pointer;
+  }
+}
+
+.useful-controls-exit-button {
+  position: absolute !important;
+  right: 8px;
+  top: 8px;
+  border-radius: 2.5% !important;
+  color: grey !important;
+}
+
+// Dialog is used fro useful controls window
+
+
+// inventory grids
+.inventory-grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: calc($gridGap * 2);
+}
+.inventory-grid-header-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  p {
+    font-size: 16px;
+  }
+}
+
+.inventory-grid-container {
+  display: grid;
+  height: $containerSize;
+  grid-template-columns: repeat($gridCols, $gridSize);
+  grid-auto-rows: $gridSize + 0.22vh;
+  gap: $gridGap;
+  overflow-y: scroll;
+}
+
+// inventory slots
+.inventory-slot {
+  background-color: $secondaryColor;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 2.5%;
+  image-rendering: -webkit-optimize-contrast;
+  position: relative;
+  background-size: 30%;
+  color: $textColor;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-style: inset;
+  border-width: 1px;
+}
+
+.inventory-slot-label-box {
+  display: none;
+}
+
+.inventory-slot-label-text {
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 2px 3px;
+  font-weight: 400;
+  font-family: $mainFont;
+  font-size: 12px;
+}
+
+.inventory-slot-number {
+  background-color: white;
+  color: black;
+  height: 12px;
+  border-top-left-radius: 0.25vh;
+  border-bottom-right-radius: 0.25vh;
+  padding: 3px;
+  font-size: 12px;
+  font-family: $mainFont;
+}
+
+.item-slot-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  p {
+    font-size: 12px;
+  }
+}
+
+.item-slot-header-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.item-hotslot-header-wrapper {
+  @extend .item-slot-header-wrapper;
+  justify-content: space-between !important;
+}
+
+.item-slot-info-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-self: flex-end;
+  padding: 3px;
+  gap: 3px;
+  p {
+    font-size: 12px;
+  }
+}
+
+.item-slot-currency-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 3px;
+  p {
+    font-size: 14px;
+    text-shadow: 0.1vh 0.1vh 0 rgba(0, 0, 0, 0.7);
+  }
+}
+
+.item-slot-price-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding-right: 3px;
+  p {
+    font-size: 14px;
+    text-shadow: 0.1vh 0.1vh 0 rgba(0, 0, 0, 0.7);
+  }
+}
+
+
+.tooltip-wrapper {
+  pointer-events: none;
+  display: flex;
+  background-color: $mainColor;
+  width: 200px;
+  padding: 8px;
+  flex-direction: column;
+  min-width: 200px;
+  color: $textColor;
+  font-family: $mainFont;
+  border-radius: 4px;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-style: inset;
+  border-width: 1px;
+  p {
+    font-size: 12px;
+    font-weight: 400;
+  }
+}
+
+.tooltip-header-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  p {
+    font-size: 15px;
+    font-weight: 400;
+  }
+}
+
+.tooltip-crafting-duration {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  svg {
+    padding-right: 3px;
+  }
+  p {
+    font-size: 14px;
+  }
+}
+
+.tooltip-ingredients {
+  padding-top: 5px;
+}
+
+.tooltip-ingredient {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  img {
+    width: 28px;
+    height: 28px;
+    padding-right: 5px;
+  }
+}
+
+// right-click context card
+.ctx-card {
+  min-width: 260px;
+  background: rgba(10, 10, 10, 0.96);
+  border-radius: 6px;
+  padding: 14px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ctx-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ctx-card-units {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.ctx-card-name {
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.ctx-card-rarity {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #f97316; // orange-ish for "legendary"-style
+}
+
+.ctx-card-type {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.ctx-card-actions {
+  display: flex;
+  flex-direction: row;
+  margin-top: 12px;
+  border-top: none;
+}
+
+.ctx-card-btn {
+  flex: 1;
+  padding: 10px 0 8px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-right: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  row-gap: 3px;
+}
+
+.ctx-card-btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ctx-card-btn-icon {
+  font-size: 20px;
+}
+
+.ctx-card-btn-label {
+  font-size: 11px;
+}
+
+.ctx-card-split {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ctx-card-split-range {
+  width: 100%;
+  accent-color: #ffffff;
+}
+
+.ctx-card-split-values {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+// hotbar
+.hotbar-container {
+  display: none;
+}
+
+.hotbar-item-slot {
+  @extend .inventory-slot;
+  width: 72px;
+  height: 72px;
+}
+
+.hotbar-slot-header-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+// item notifications
+
+.item-notification-container {
+  display: flex;
+  overflow-x: scroll;
+  flex-wrap: nowrap;
+  gap: 2px;
+  position: absolute;
+  bottom: 20vh;
+  left: 50%;
+  width: 100%;
+  margin-left: calc(50% - calc($gridSize/2));
+  transform: translate(-50%);
+}
+
+.item-notification-action-box {
+  width: 100%;
+  color: $textColor;
+  background-color: $secondaryColor;
+  text-transform: uppercase;
+  text-align: center;
+  border-top-left-radius: 0.25vh;
+  border-top-right-radius: 0.25vh;
+  font-family: $mainFont;
+  p {
+    font-size: 11px;
+    padding: 2px;
+    font-weight: 600;
+  }
+}
+
+.item-notification-item-box {
+  @extend .inventory-slot;
+  height: $gridSize;
+  width: $gridSize;
+}
+
+.durability-bar {
+  background: rgba(0, 0, 0, 0.5);
+  height: 3px;
+  overflow: hidden;
+}
+
+.weight-bar {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px inset rgba(0, 0, 0, 0.1);
+  height: 0.8vh;
+  border-radius: 5%;
+  overflow: hidden;
+}
+
+.transition-fade-enter {
+  opacity: 0;
+}
+
+.transition-fade-enter-active {
+  opacity: 1;
+  transition: opacity 200ms;
+}
+
+.transition-fade-exit {
+  opacity: 1;
+}
+
+.transition-fade-exit-active {
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+.transition-slide-up-enter {
+  transform: translateY(200px)
+}
+
+.transition-slide-up-enter-active {
+  transform: translateY(0px);
+  transition: all 200ms;
+}
+
+.transition-slide-up-exit {
+  transform: translateY(0px);
+}
+
+.transition-slide-up-exit-active {
+  transform: translateY(200px);
+  transition: all 200ms;
+}
+
+// ==== Custom visual theme inspired by ui/src/index.css ====
+// These rules override some of the default ox_inventory styles
+// to make the web UI look closer to the custom UI.
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  background: transparent;
+  color: #fff;
+}
+
+.inventory-wrapper {
+  // Make main layout closer to ui/src/index.css .app-container
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  // Keep the player (pockets + backpack) column on the left,
+  // only the right column layout is customized separately.
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 3rem 4rem;
+  gap: 40px;
+  background: linear-gradient(
+    90deg,
+    rgba(25, 25, 25, 0.95) 0%,
+    rgba(25, 25, 25, 0.7) 40%,
+    transparent 50%,
+    transparent 100%
+  );
+}
+
+// Right column container (drops / other inventories)
+.right-inventory-column {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  // Push the grid down and center it in the remaining horizontal space.
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 15rem;
+}
+
+// Player column container (left side)
+.player-inventory-column {
+  width: 650px;
+  display: flex;
+  flex-direction: row;
+}
+
+.pockets-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-right: 30px;
+}
+
+.player-inventory-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+// Sections / headers / weight badge like custom UI
+.section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.section-header h2 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.weight-badge {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 0.15rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+}
+
+.weight-badge span {
+  color: #fff;
+}
+
+.grid {
+  display: grid;
+  gap: 10px;
+}
+
+.pockets-grid {
+  grid-template-columns: repeat(6, $gridSize);
+}
+
+.backpack-grid {
+  grid-template-columns: repeat(6, $gridSize);
+  // Replaced scrolling here with .backpack-locked-area-scroller
+}
+
+.backpack-locked-area-scroller {
+  max-height: calc(#{$gridSize * 4} + #{$gridGap * 3});
+  overflow-y: auto;
+  pointer-events: auto;
+}
+
+.backpack-locked-area {
+  position: relative;
+  // Let the grid expand fully so the scroller handles the overflow natively.
+}
+
+.backpack-footer {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.backpack-footer h3 {
+  font-weight: 500;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.2px;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.backpack-footer p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.backpack-footer .highlight {
+  color: #d977a6;
+  font-weight: 500;
+}
+
+// Header / title text from custom UI
+.header {
+  margin-bottom: 2rem;
+}
+
+.esc-back {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.5px;
+}
+
+.esc-back strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 3.2rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.backpack-subtitle {
+  margin-bottom: 1rem;
+  margin-top: -0.8rem;
+}
+
+// Non-player inventories still use original wrapper, but inherit new visual grid look
+.inventory-grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inventory-grid-header-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.inventory-grid-header-wrapper p {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.inventory-grid-container {
+  display: grid;
+  // Use the same base slot size as the backpack,
+  // so right-side slots are not visually smaller.
+  grid-template-columns: repeat(6, $gridSize);
+  gap: 10px;
+  // Match the visible height of the left-side backpack grid
+  // (4 rows high with gaps) so both sides align visually.
+  max-height: calc(#{$gridSize * 4} + #{$gridGap * 3});
+  overflow-y: auto;
+}
+
+.inventory-slot {
+  aspect-ratio: 1;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  border-radius: 8px;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.288) 0, transparent 45%),
+    radial-gradient(circle at bottom right, rgba(0, 0, 0, 0.158) 0, rgba(0, 0, 0, 0.123) 55%);
+  border: 1px solid rgba(221, 221, 221, 0.062);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.02),
+    inset 0 0 18px rgba(0, 0, 0, 0.24);
+  overflow: hidden;
+
+  // three subtle vertical bars in the center (empty-slot motif)
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 20%;
+    background-image: linear-gradient(
+      90deg,
+      transparent 20%,
+      rgba(120, 120, 120, 0.024) 22%,
+      rgba(120, 120, 120, 0.024) 26%,
+      transparent 28%,
+      transparent 44%,
+      rgba(120, 120, 120, 0.024) 46%,
+      rgba(120, 120, 120, 0.024) 50%,
+      transparent 52%,
+      transparent 68%,
+      rgba(120, 120, 120, 0.024) 70%,
+      rgba(120, 120, 120, 0.024) 74%,
+      transparent 76%
+    );
+    opacity: 0.85;
+    pointer-events: none;
+  }
+}
+
+.inventory-slot.has-item::before {
+  opacity: 0;
+}
+
+.backpack-locked-slot {
+  cursor: not-allowed;
+  filter: grayscale(100%) brightness(50%);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.inventory-slot:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(50, 50, 50, 0.8);
+}
+
+.item-slot-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.inventory-slot-number {
+  background: #fff;
+  color: #000;
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+
+.hotbar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: absolute;
+  top: 50%;
+  left: 2.5rem;
+  transform: translateY(-50%);
+  width: auto;
+}
+
+.hotbar-item-slot {
+  width: $gridSize;
+  height: $gridSize;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: rgba(20, 20, 20, 0.85);
+  background-image:
+    linear-gradient(90deg, transparent 37%, rgba(255, 255, 255, 0.02) 38%, rgba(255, 255, 255, 0.02) 43%, transparent 44%),
+    linear-gradient(90deg, transparent 47%, rgba(255, 255, 255, 0.03) 48%, rgba(255, 255, 255, 0.03) 53%, transparent 54%),
+    linear-gradient(90deg, transparent 57%, rgba(255, 255, 255, 0.02) 58%, rgba(255, 255, 255, 0.02) 63%, transparent 64%);
+  background-size: 100% 50%;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.9);
+}
+
+.hotbar-item-slot.has-item {
+  background-size: auto;
+}
+
+.hotbar-slot-header-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.useful-controls-button {
+  position: absolute !important;
+  bottom: 25px;
+  right: 25px;
+  transition: 200ms !important;
+  border: none;
+  color: white;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5% !important;
+  background-color: rgba(40, 40, 40, 0.8) !important;
+}
+
+.useful-controls-button:hover {
+  background-color: rgba(60, 60, 60, 0.9) !important;
+  cursor: pointer;
+}
+
